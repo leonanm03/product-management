@@ -14,30 +14,55 @@ export class ProductsService {
   ) {}
 
   async validate({ products }: UpdateProductsDtoArray) {
-    const problems = []
+    const items = []
 
     for (const { code, sales_price } of products) {
-      const messages = []
+      const problems = []
       const item = await this.productsRepository.getByCode(code)
-      if (!item) messages.push('Product not found')
+      if (!item) items.push({ code, problems: ['Product not found'] })
       if (item) {
         if (Number(item.cost_price) > sales_price)
-          messages.push(
-            `Sales price ${sales_price} cant be less than cost price ${Number(
-              item.cost_price
-            )}`
-          )
+          problems.push(`Sales price cant be less than cost price`)
 
         const percentage = this.diferencePercentage(
           Number(item.sales_price),
           sales_price
         )
         if (percentage > 10)
-          messages.push(
-            `Difference cant be greater than 10%, actual price: ${Number(
-              item.sales_price
-            )}`
+          problems.push(`Difference cant be greater than 10%`)
+
+        const product_in_pack = await this.packsRepository.getPackByproductCode(
+          code
+        )
+        if (product_in_pack) {
+          const packs = await this.packsRepository.getManyByCode(
+            Number(product_in_pack.pack_id)
           )
+
+          const pack_product = products.find(
+            (item) => item.code === Number(product_in_pack.pack_id)
+          )
+
+          if (!pack_product) {
+            problems.push(
+              `Pack price needs to be equal to the sum of the products price`
+            )
+          } else {
+            let price_sum = 0
+            for (const pack of packs) {
+              const product = products.find(
+                (item) => item.code === Number(pack.product_id)
+              )
+              if (product) {
+                price_sum += product.sales_price * Number(pack.qty)
+              }
+            }
+            if (price_sum !== pack_product.sales_price)
+              problems.push(
+                `Pack price needs to be equal to the sum of the products price`
+              )
+          }
+        }
 
         const packs = await this.packsRepository.getManyByCode(code)
         if (packs.length > 0) {
@@ -46,40 +71,38 @@ export class ProductsService {
             const product = products.find(
               (item) => item.code === Number(pack.product_id)
             )
-            if (!product) {
-              messages.push(
-                `You must update product code ${Number(pack.product_id)} too`
-              )
-              break
-            } else price_sum += product.sales_price * Number(pack.qty)
+            if (product) {
+              price_sum += product.sales_price * Number(pack.qty)
+            }
           }
-
-          if (price_sum && price_sum !== sales_price)
-            messages.push(
-              `Pack price ${sales_price} needs to be equal to the sum of the products price ${price_sum}`
+          if (price_sum !== sales_price)
+            problems.push(
+              `Pack price needs to be equal to the sum of the products price`
             )
         }
-      }
 
-      if (messages.length > 0) problems.push({ code, messages })
+        items.push({
+          code,
+          name: item.name,
+          actual_price: item.sales_price,
+          new_price: sales_price.toFixed(2),
+          problems
+        })
+      }
     }
 
-    return problems
+    return items
   }
 
-  findAll() {
-    return `This action returns all products`
-  }
+  async updateMany({ products }: UpdateProductsDtoArray) {
+    const validation = await this.validate({ products })
+    const found_errors = validation.filter((item) => item.problems.length > 0)
+    if (found_errors.length > 0) return found_errors
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`
-  }
-
-  update(id: number, updateProductsDto: UpdateProductsDto) {
-    return `This action updates a #${id} product`
-  }
-  remove(id: number) {
-    return `This action removes a #${id} product`
+    for (const { code, sales_price } of products) {
+      const teste = await this.productsRepository.update(code, { sales_price })
+      console.log(teste)
+    }
   }
 
   diferencePercentage(old_price: number, new_price: number) {

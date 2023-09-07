@@ -11,4 +11,10 @@ export class PrismaPacksRepository implements PacksRepository {
       where: { pack_id: code }
     })
   }
+
+  async getPackByproductCode(code: number) {
+    return this.prisma.packs.findFirst({
+      where: { product_id: code }
+    })
+  }
 }
