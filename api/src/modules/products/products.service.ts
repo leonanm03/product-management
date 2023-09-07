@@ -35,6 +35,25 @@ export class ProductsService {
 
         const packs = await this.packsRepository.getManyByCode(code)
         if (packs.length > 0) {
+          let price_sum = 0
+          for (const pack of packs) {
+            const product = products.find(
+              (item) => item.code === Number(pack.product_id)
+            )
+            if (!product) {
+              problems.push({
+                code,
+                message: 'You must update the unpacked product too'
+              })
+              break
+            } else price_sum += product.sales_price * Number(pack.qty)
+          }
+
+          if (price_sum && price_sum !== sales_price)
+            problems.push({
+              code,
+              message: 'Pack price is different from the sum of the products'
+            })
         }
       }
     }
