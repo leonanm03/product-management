@@ -10,9 +10,8 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get('/validation')
-  updateValidation(@Body() products: UpdateProductsDtoArray) {
-    console.log(products)
-    return this.productsService.validate(products)
+  updateValidation(@Body() updateProductsDtoArray: UpdateProductsDtoArray) {
+    return this.productsService.validate(updateProductsDtoArray)
   }
 
   @Get()
