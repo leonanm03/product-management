@@ -17,21 +17,27 @@ export class ProductsService {
     const problems = []
 
     for (const { code, sales_price } of products) {
+      const messages = []
       const item = await this.productsRepository.getByCode(code)
-      if (!item) problems.push({ code, message: 'Product not found' })
+      if (!item) messages.push('Product not found')
       if (item) {
         if (Number(item.cost_price) > sales_price)
-          problems.push({
-            code,
-            message: 'Sales price is less than cost price'
-          })
+          messages.push(
+            `Sales price ${sales_price} cant be less than cost price ${Number(
+              item.cost_price
+            )}`
+          )
 
         const percentage = this.diferencePercentage(
           Number(item.sales_price),
           sales_price
         )
         if (percentage > 10)
-          problems.push({ code, message: 'Difference greater than 10%' })
+          messages.push(
+            `Difference cant be greater than 10%, actual price: ${Number(
+              item.sales_price
+            )}`
+          )
 
         const packs = await this.packsRepository.getManyByCode(code)
         if (packs.length > 0) {
@@ -41,21 +47,21 @@ export class ProductsService {
               (item) => item.code === Number(pack.product_id)
             )
             if (!product) {
-              problems.push({
-                code,
-                message: 'You must update the unpacked product too'
-              })
+              messages.push(
+                `You must update product code ${Number(pack.product_id)} too`
+              )
               break
             } else price_sum += product.sales_price * Number(pack.qty)
           }
 
           if (price_sum && price_sum !== sales_price)
-            problems.push({
-              code,
-              message: 'Pack price is different from the sum of the products'
-            })
+            messages.push(
+              `Pack price ${sales_price} needs to be equal to the sum of the products price ${price_sum}`
+            )
         }
       }
+
+      if (messages.length > 0) problems.push({ code, messages })
     }
 
     return problems
