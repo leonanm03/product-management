@@ -7,11 +7,12 @@ import { Prisma } from '@prisma/client'
 export class PrismaProductsRepository implements ProductsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getById(code: number) {
+  async getByCode(code: number) {
     return this.prisma.products.findUnique({
       where: { code }
     })
   }
+
   async update(code: number, data: Prisma.productsUpdateInput) {
     return this.prisma.products.update({
       where: { code },
