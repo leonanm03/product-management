@@ -4,10 +4,14 @@ import {
   UpdateProductsDtoArray
 } from './dto/update-products.dto'
 import { ProductsRepository } from './repositories/products.repository'
+import { PacksRepository } from '../packs/repositories/packs.repository'
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly productsRepository: ProductsRepository) {}
+  constructor(
+    private readonly productsRepository: ProductsRepository,
+    private readonly packsRepository: PacksRepository
+  ) {}
 
   async validate({ products }: UpdateProductsDtoArray) {
     const problems = []
@@ -19,7 +23,7 @@ export class ProductsService {
         if (Number(item.cost_price) > sales_price)
           problems.push({
             code,
-            message: 'Sales price less than cost price'
+            message: 'Sales price is less than cost price'
           })
 
         const percentage = this.diferencePercentage(
@@ -28,6 +32,10 @@ export class ProductsService {
         )
         if (percentage > 10)
           problems.push({ code, message: 'Difference greater than 10%' })
+
+        const packs = await this.packsRepository.getManyByCode(code)
+        if (packs.length > 0) {
+        }
       }
     }
 
