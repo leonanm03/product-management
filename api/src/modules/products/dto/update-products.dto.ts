@@ -4,6 +4,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
+  Max,
   ValidateNested
 } from 'class-validator'
 
@@ -15,6 +16,7 @@ export class UpdateProductsDto {
 
   @IsNotEmpty()
   @IsNumber({ maxDecimalPlaces: 2 })
+  @Max(999999999.99)
   sales_price: number
 }
 
