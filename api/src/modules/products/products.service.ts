@@ -50,12 +50,21 @@ export class ProductsService {
           } else {
             let price_sum = 0
             for (const pack of packs) {
-              const product = products.find(
+              let product = products.find(
                 (item) => item.code === Number(pack.product_id)
               )
-              if (product) {
-                price_sum += product.sales_price * Number(pack.qty)
+              if (!product) {
+                const get_product = await this.productsRepository.getByCode(
+                  Number(pack.product_id)
+                )
+                if (get_product)
+                  product = {
+                    code: Number(get_product.code),
+                    sales_price: Number(get_product.sales_price)
+                  }
               }
+              if (product)
+                price_sum += Number(product.sales_price) * Number(pack.qty)
             }
             if (price_sum !== pack_product.sales_price)
               problems.push(
@@ -68,9 +77,21 @@ export class ProductsService {
         if (packs.length > 0) {
           let price_sum = 0
           for (const pack of packs) {
-            const product = products.find(
+            let product = products.find(
               (item) => item.code === Number(pack.product_id)
             )
+
+            if (!product) {
+              const get_product = await this.productsRepository.getByCode(
+                Number(pack.product_id)
+              )
+              if (get_product)
+                product = {
+                  code: Number(get_product.code),
+                  sales_price: Number(get_product.sales_price)
+                }
+            }
+
             if (product) {
               price_sum += product.sales_price * Number(pack.qty)
             }
@@ -105,9 +126,10 @@ export class ProductsService {
       )
 
     for (const { code, sales_price } of products) {
-      const teste = await this.productsRepository.update(code, { sales_price })
-      console.log(teste)
+      await this.productsRepository.update(code, { sales_price })
     }
+
+    return { message: 'Products updated' }
   }
 
   diferencePercentage(old_price: number, new_price: number) {
