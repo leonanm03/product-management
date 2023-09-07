@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import {
   UpdateProductsDto,
   UpdateProductsDtoArray
@@ -97,7 +97,12 @@ export class ProductsService {
   async updateMany({ products }: UpdateProductsDtoArray) {
     const validation = await this.validate({ products })
     const found_errors = validation.filter((item) => item.problems.length > 0)
-    if (found_errors.length > 0) return found_errors
+    if (found_errors.length > 0)
+      throw new HttpException(
+        'Problem with some products',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+        { cause: found_errors }
+      )
 
     for (const { code, sales_price } of products) {
       const teste = await this.productsRepository.update(code, { sales_price })
