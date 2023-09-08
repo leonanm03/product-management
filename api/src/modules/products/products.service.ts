@@ -1,8 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import {
-  UpdateProductsDto,
-  UpdateProductsDtoArray
-} from './dto/update-products.dto'
+import { UpdateProductsDtoArray } from './dto/update-products.dto'
 import { ProductsRepository } from './repositories/products.repository'
 import { PacksRepository } from '../packs/repositories/packs.repository'
 
