@@ -1,6 +1,7 @@
 'use client'
 import { ProductsTable } from '@/components'
 import { Product } from '@/protocols'
+import api from '@/services/api'
 import { useState } from 'react'
 
 export default function UpdatePricesPage() {
@@ -10,6 +11,10 @@ export default function UpdatePricesPage() {
 
     async function handleInput(event: React.FormEvent<HTMLInputElement>) {
         const file = event.currentTarget.files?.[0]
+
+        setCanValidate(false)
+        setCanUpdate(false)
+
         if (!file) {
             setProducts([])
         } else {
@@ -43,39 +48,45 @@ export default function UpdatePricesPage() {
                 const foundProblem = data.find((product) => {
                     return product.problems
                 })
-                if (foundProblem) {
-                    setCanValidate(false)
-                    setCanUpdate(false)
-                } else setCanValidate(true)
+                if (!foundProblem) setCanValidate(true)
             }
 
             reader.readAsText(file)
         }
     }
 
+    function handleValidate() {
+        api.get('/products/validation', { params: { products } })
+            .then((response) => {
+                console.log(response.data)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
+
     return (
         <>
-            <div className="max-w-2xl">
-                <label
-                    className="block mb-2  font-medium dark:text-gray-300"
-                    htmlFor="file_input"
-                >
-                    Inserir Arquivo
-                </label>
-                <input
-                    className="block w-full text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                    id="file_input"
-                    type="file"
-                    accept=".csv"
-                    onChange={(event) => handleInput(event)}
-                ></input>
-            </div>
+            <label htmlFor="file_input" className="block text-lg font-bold">
+                Selecione o arquivo CSV
+            </label>
+            <input
+                className="block  border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+                id="file_input"
+                type="file"
+                accept=".csv"
+                onChange={(event) => handleInput(event)}
+            />
+
             <div>
                 {products.length > 0 && <ProductsTable products={products} />}
             </div>
 
             {canValidate && (
-                <button className="group relative h-12 w-48 m-6 overflow-hidden rounded-2xl bg-green-500 text-lg font-bold text-white">
+                <button
+                    onClick={handleValidate}
+                    className="group relative h-12 w-48 m-6 overflow-hidden rounded-2xl bg-green-500 text-lg font-bold text-white"
+                >
                     VALIDAR
                     <div className="absolute inset-0 h-full w-full scale-0 rounded-2xl transition-all duration-300 group-hover:scale-100 group-hover:bg-white/30"></div>
                 </button>
