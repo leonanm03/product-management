@@ -67,3 +67,4 @@ npm run dev
 
 
 Now, in you browser, you may enter in the /update-prices route and use the application.
+<img src="assets/printscreen.png" alt="screem sample" />
