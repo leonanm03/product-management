@@ -1,7 +1,7 @@
 export type Product = {
-    code: number
+    code?: number
     name?: string
     sales_price?: number
-    new_price: number
+    new_price?: number
     problems?: string[] | null
 }

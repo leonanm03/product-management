@@ -26,13 +26,19 @@ export default function UpdatePricesPage() {
 
                 const data = rowsCSV.map((row: string) => {
                     const content = row.split(',')
-                    return {
+                    const product = {
                         code: Number(content[0]),
                         new_price: Number(content[1])
-                    }
-                })
+                    } as Product
 
-                console.log(data)
+                    if (content[0]) product.code = Number(content[0])
+                    else product.problems = ['Código ou preço não informado']
+
+                    if (content[1]) product.new_price = Number(content[1])
+                    else product.problems = ['Código ou preço não informado']
+
+                    return product
+                })
                 setProducts(data)
             }
 
