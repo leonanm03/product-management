@@ -56,7 +56,13 @@ export default function UpdatePricesPage() {
     }
 
     function handleValidate() {
-        api.get('/products/validation', { params: { products } })
+        const body = products.map((product) => {
+            return {
+                code: product.code,
+                sales_price: product.new_price
+            }
+        })
+        api.get('/products/validation', { data: { products: body } })
             .then((response) => {
                 console.log(response.data)
             })
