@@ -27,8 +27,6 @@ export default function UpdatePricesPage() {
                         new_price: Number(content[1])
                     } as Product
 
-                    console.log(content)
-
                     if (content[0]) product.code = Number(content[0])
                     else product.problems = ['Código ou preço não informado']
 
@@ -47,17 +45,22 @@ export default function UpdatePricesPage() {
 
     return (
         <>
-            <div>
-                <label htmlFor="csv_input">Selecione o arquivo CSV: </label>
+            <div className="max-w-2xl">
+                <label
+                    className="block mb-2  font-medium dark:text-gray-300"
+                    htmlFor="file_input"
+                >
+                    Inserir Arquivo
+                </label>
                 <input
-                    id="csv_input"
+                    className="block w-full text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    id="file_input"
                     type="file"
-                    onChange={(event) => handleInput(event)}
                     accept=".csv"
-                />
+                    onChange={(event) => handleInput(event)}
+                ></input>
             </div>
             <div>
-                <h1>Atualizar Preços</h1>
                 {products.length > 0 && <ProductsTable products={products} />}
             </div>
         </>
