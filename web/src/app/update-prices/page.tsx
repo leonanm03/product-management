@@ -55,6 +55,31 @@ export default function UpdatePricesPage() {
         }
     }
 
+    function handleUpdate() {
+        const body = products.map((product) => {
+            return {
+                code: product.code,
+                sales_price: product.new_price
+            }
+        })
+        api.patch('/products/update', { products: body })
+            .then(() => {
+                alert('Produtos atualizados com sucesso')
+                setCanUpdate(false)
+                setCanValidate(false)
+                setProducts([])
+                const fileInput = document.getElementById(
+                    'file_input'
+                ) as HTMLInputElement
+                fileInput.value = ''
+            })
+            .catch(() => {
+                alert(
+                    'Ocorreu um erro ao atualizar os produtos, tente novamente mais tarde'
+                )
+            })
+    }
+
     function handleValidate() {
         const body = products.map((product) => {
             return {
@@ -72,8 +97,10 @@ export default function UpdatePricesPage() {
                 })
                 if (!foundProblem) setCanUpdate(true)
             })
-            .catch((error) => {
-                console.log(error)
+            .catch(() => {
+                alert(
+                    'Ocorreu um erro ao validar os produtos, tente novamente mais tarde'
+                )
             })
     }
 
@@ -104,7 +131,10 @@ export default function UpdatePricesPage() {
                 </button>
             )}
             {canUpdate && (
-                <button className="group relative h-12 w-48 overflow-hidden rounded-2xl bg-green-500 text-lg font-bold text-white">
+                <button
+                    onClick={handleUpdate}
+                    className="group relative h-12 w-48 overflow-hidden rounded-2xl bg-green-500 text-lg font-bold text-white"
+                >
                     ATUALIZAR
                     <div className="absolute inset-0 h-full w-full scale-0 rounded-2xl transition-all duration-300 group-hover:scale-100 group-hover:bg-white/30"></div>
                 </button>
