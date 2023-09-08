@@ -1,15 +1,12 @@
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common'
+import { Controller, Body, Patch, Post } from '@nestjs/common'
 import { ProductsService } from './products.service'
-import {
-  UpdateProductsDto,
-  UpdateProductsDtoArray
-} from './dto/update-products.dto'
+import { UpdateProductsDtoArray } from './dto/update-products.dto'
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Get('/validation')
+  @Post('/validation')
   updateValidation(@Body() updateProductsDtoArray: UpdateProductsDtoArray) {
     return this.productsService.validate(updateProductsDtoArray)
   }
