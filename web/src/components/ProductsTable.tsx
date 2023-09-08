@@ -1,4 +1,5 @@
-export function ProductsTable() {
+import { Product } from '../protocols'
+export function ProductsTable({ products }: { products: Array<Product> }) {
     return (
         <table>
             <thead>
@@ -11,25 +12,29 @@ export function ProductsTable() {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Produto 1</td>
-                    <td>R$ 10,00</td>
-                    <td>R$ 8,00</td>
-                    <td>
-                        <p>Validado</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Produto 2</td>
-                    <td>R$ 10,00</td>
-                    <td>R$ 8,00</td>
-                    <td>
-                        <p>diferença muito grande</p>
-                        <p>Não Validado</p>
-                    </td>
-                </tr>
+                {products.map((product) => (
+                    <tr key={product.code}>
+                        <td>{product.code}</td>
+                        <td>{product.name}</td>
+                        <td>{product.sales_price}</td>
+                        <td>{product.new_price}</td>
+                        <td>
+                            {product.problems && (
+                                <>
+                                    {product.problems.length > 0 ? (
+                                        product.problems.map((problem) => {
+                                            return (
+                                                <p key={problem}>{problem}</p>
+                                            )
+                                        })
+                                    ) : (
+                                        <p className=" red ">ok</p>
+                                    )}
+                                </>
+                            )}
+                        </td>
+                    </tr>
+                ))}
             </tbody>
         </table>
     )
