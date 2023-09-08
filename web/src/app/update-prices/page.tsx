@@ -5,6 +5,8 @@ import { useState } from 'react'
 
 export default function UpdatePricesPage() {
     const [products, setProducts] = useState<Array<Product>>([])
+    const [canValidate, setCanValidate] = useState<boolean>(false)
+    const [canUpdate, setCanUpdate] = useState<boolean>(false)
 
     async function handleInput(event: React.FormEvent<HTMLInputElement>) {
         const file = event.currentTarget.files?.[0]
@@ -37,6 +39,14 @@ export default function UpdatePricesPage() {
                     return product
                 })
                 setProducts(data)
+
+                const foundProblem = data.find((product) => {
+                    return product.problems
+                })
+                if (foundProblem) {
+                    setCanValidate(false)
+                    setCanUpdate(false)
+                } else setCanValidate(true)
             }
 
             reader.readAsText(file)
@@ -63,6 +73,19 @@ export default function UpdatePricesPage() {
             <div>
                 {products.length > 0 && <ProductsTable products={products} />}
             </div>
+
+            {canValidate && (
+                <button className="group relative h-12 w-48 m-6 overflow-hidden rounded-2xl bg-green-500 text-lg font-bold text-white">
+                    VALIDAR
+                    <div className="absolute inset-0 h-full w-full scale-0 rounded-2xl transition-all duration-300 group-hover:scale-100 group-hover:bg-white/30"></div>
+                </button>
+            )}
+            {canUpdate && (
+                <button className="group relative h-12 w-48 overflow-hidden rounded-2xl bg-green-500 text-lg font-bold text-white">
+                    ATUALIZAR
+                    <div className="absolute inset-0 h-full w-full scale-0 rounded-2xl transition-all duration-300 group-hover:scale-100 group-hover:bg-white/30"></div>
+                </button>
+            )}
         </>
     )
 }
