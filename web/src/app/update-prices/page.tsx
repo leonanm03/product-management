@@ -27,10 +27,13 @@ export default function UpdatePricesPage() {
                         new_price: Number(content[1])
                     } as Product
 
+                    console.log(content)
+
                     if (content[0]) product.code = Number(content[0])
                     else product.problems = ['Código ou preço não informado']
 
-                    if (content[1]) product.new_price = Number(content[1])
+                    if (content[1] !== '\r')
+                        product.new_price = Number(content[1])
                     else product.problems = ['Código ou preço não informado']
 
                     return product
