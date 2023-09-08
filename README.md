@@ -40,6 +40,25 @@ npm run prisma:generate
 ```
 npm run prisma:seed
  ```
+After seeding, your database will look like this:
+
+<table>
+            <thead>
+                    <tr>
+                        <th >Products table</th>
+                        <th>Packs table</th>
+                        </tr>   
+                </thead>
+                <tbody>
+                    <tr>
+                        <td ><img src="assets/productsTable.png" alt="products table" /></td>
+                        <td >
+                            <img src="assets/packsTable.png" alt="packs table" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
 #### step 07: Let api run
 ```
 npm run start:dev
@@ -64,7 +83,8 @@ NEXT_PUBLIC_API_URL=http://localhost:3000      # the address where your api will
 npm run dev
  ```
 
-
-
 Now, in you browser, you may enter in the /update-prices route and use the application.
 <img src="assets/printscreen.png" alt="screem sample" />
+
+If you need some example of csv files to try the application, you can download some [clicking here](./assets/test-files)
+
