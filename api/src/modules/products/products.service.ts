@@ -16,17 +16,17 @@ export class ProductsService {
     for (const { code, sales_price } of products) {
       const problems = []
       const item = await this.productsRepository.getByCode(code)
-      if (!item) items.push({ code, problems: ['Product not found'] })
+      if (!item) items.push({ code, problems: ['Produto não encontrado'] })
       if (item) {
         if (Number(item.cost_price) > sales_price)
-          problems.push(`Sales price cant be less than cost price`)
+          problems.push(`O preço de venda não pode ser menor que o de custo`)
 
         const percentage = this.diferencePercentage(
           Number(item.sales_price),
           sales_price
         )
         if (percentage > 10)
-          problems.push(`Difference cant be greater than 10%`)
+          problems.push(`A mudança de preço não pode ser maior que 10%`)
 
         const product_in_pack = await this.packsRepository.getPackByproductCode(
           code
@@ -42,7 +42,7 @@ export class ProductsService {
 
           if (!pack_product) {
             problems.push(
-              `Pack price needs to be equal to the sum of the products price`
+              `O preço do pacote precisa ser igual a soma dos preços dos seus produtos`
             )
           } else {
             let price_sum = 0
@@ -65,7 +65,7 @@ export class ProductsService {
             }
             if (price_sum !== pack_product.sales_price)
               problems.push(
-                `Pack price needs to be equal to the sum of the products price`
+                `O preço do pacote precisa ser igual a soma dos preços dos seus produtos`
               )
           }
         }
@@ -95,15 +95,15 @@ export class ProductsService {
           }
           if (price_sum !== sales_price)
             problems.push(
-              `Pack price needs to be equal to the sum of the products price`
+              `O preço do pacote precisa ser igual a soma dos preços dos seus produtos`
             )
         }
 
         items.push({
           code,
           name: item.name,
-          actual_price: item.sales_price,
-          new_price: sales_price.toFixed(2),
+          sales_price: Number(item.sales_price),
+          new_price: Number(sales_price),
           problems
         })
       }
@@ -126,7 +126,7 @@ export class ProductsService {
       await this.productsRepository.update(code, { sales_price })
     }
 
-    return { message: 'Products updated' }
+    return { message: 'Produtos atualizados' }
   }
 
   diferencePercentage(old_price: number, new_price: number) {
