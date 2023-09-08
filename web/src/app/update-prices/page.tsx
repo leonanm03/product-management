@@ -62,9 +62,15 @@ export default function UpdatePricesPage() {
                 sales_price: product.new_price
             }
         })
-        api.get('/products/validation', { data: { products: body } })
+        api.post('/products/validation', { products: body })
             .then((response) => {
-                console.log(response.data)
+                setProducts(response.data)
+
+                const foundProblem = response.data.find((product: Product) => {
+                    if (product.problems && product.problems.length > 0)
+                        return true
+                })
+                if (!foundProblem) setCanUpdate(true)
             })
             .catch((error) => {
                 console.log(error)
