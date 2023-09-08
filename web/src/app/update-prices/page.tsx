@@ -4,17 +4,13 @@ import { Product } from '@/protocols'
 import { useState } from 'react'
 
 export default function UpdatePricesPage() {
-    const [inputFile, setInputFile] = useState<File | null>(null)
     const [products, setProducts] = useState<Array<Product>>([])
 
     async function handleInput(event: React.FormEvent<HTMLInputElement>) {
         const file = event.currentTarget.files?.[0]
         if (!file) {
-            setInputFile(null)
             setProducts([])
         } else {
-            setInputFile(file)
-
             const reader = new FileReader()
 
             reader.onload = (e) => {

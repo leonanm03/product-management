@@ -1,5 +1,6 @@
 import { TableRow } from '.'
 import { Product } from '../protocols'
+
 export function ProductsTable({ products }: { products: Array<Product> }) {
     return (
         <div className="align-middle inline-block min-w-full shadow overflow-hidden bg-white shadow-dashboard px-8 pt-3 rounded-bl-lg rounded-br-lg">

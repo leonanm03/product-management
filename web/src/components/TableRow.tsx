@@ -46,7 +46,7 @@ export function TableRow({ product }: { product: Product }) {
                                     aria-hidden
                                     className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
                                 ></span>
-                                <span className="relative text-xs">active</span>
+                                <span className="relative text-xs">OK</span>
                             </div>
                         )}
                     </>
