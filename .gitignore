@@ -26,3 +26,26 @@ api/!.vscode/extensions.json
 api/.env
 api/.env.test
 api/.env.production
+
+
+
+#### Web ####
+web/node_modules
+web/.pnp
+web/.pnp.js
+web/coverage
+web/.next/
+web/out/
+web/build
+web/.DS_Store
+web/*.pem
+web/npm-debug.log*
+web/yarn-debug.log*
+web/yarn-error.log*
+web/.env*.local
+web/.vercel
+web/*.tsbuildinfo
+web/next-env.d.ts
+web/.env
+web/.env.test
+web/.env.production
