@@ -5,6 +5,8 @@ import { useState } from 'react'
 
 export default function UpdatePricesPage() {
     const [products, setProducts] = useState<Array<Product>>([])
+    const [canValidate, setCanValidate] = useState<boolean>(false)
+    const [canUpdate, setCanUpdate] = useState<boolean>(false)
 
     async function handleInput(event: React.FormEvent<HTMLInputElement>) {
         const file = event.currentTarget.files?.[0]
@@ -30,12 +32,21 @@ export default function UpdatePricesPage() {
                     if (content[0]) product.code = Number(content[0])
                     else product.problems = ['Código ou preço não informado']
 
-                    if (content[1]) product.new_price = Number(content[1])
+                    if (content[1] !== '\r')
+                        product.new_price = Number(content[1])
                     else product.problems = ['Código ou preço não informado']
 
                     return product
                 })
                 setProducts(data)
+
+                const foundProblem = data.find((product) => {
+                    return product.problems
+                })
+                if (foundProblem) {
+                    setCanValidate(false)
+                    setCanUpdate(false)
+                } else setCanValidate(true)
             }
 
             reader.readAsText(file)
@@ -44,19 +55,37 @@ export default function UpdatePricesPage() {
 
     return (
         <>
-            <div>
-                <label htmlFor="csv_input">Selecione o arquivo CSV: </label>
+            <div className="max-w-2xl">
+                <label
+                    className="block mb-2  font-medium dark:text-gray-300"
+                    htmlFor="file_input"
+                >
+                    Inserir Arquivo
+                </label>
                 <input
-                    id="csv_input"
+                    className="block w-full text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    id="file_input"
                     type="file"
-                    onChange={(event) => handleInput(event)}
                     accept=".csv"
-                />
+                    onChange={(event) => handleInput(event)}
+                ></input>
             </div>
             <div>
-                <h1>Atualizar Preços</h1>
                 {products.length > 0 && <ProductsTable products={products} />}
             </div>
+
+            {canValidate && (
+                <button className="group relative h-12 w-48 m-6 overflow-hidden rounded-2xl bg-green-500 text-lg font-bold text-white">
+                    VALIDAR
+                    <div className="absolute inset-0 h-full w-full scale-0 rounded-2xl transition-all duration-300 group-hover:scale-100 group-hover:bg-white/30"></div>
+                </button>
+            )}
+            {canUpdate && (
+                <button className="group relative h-12 w-48 overflow-hidden rounded-2xl bg-green-500 text-lg font-bold text-white">
+                    ATUALIZAR
+                    <div className="absolute inset-0 h-full w-full scale-0 rounded-2xl transition-all duration-300 group-hover:scale-100 group-hover:bg-white/30"></div>
+                </button>
+            )}
         </>
     )
 }
